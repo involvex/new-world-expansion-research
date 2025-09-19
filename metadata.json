@@ -1,0 +1,5 @@
+{
+  "name": "Aeternum Research Tool",
+  "description": "A research tool that uses AI to search the web for information about the New World Aeternum expansion, providing tips and insights to help players prepare for the release.",
+  "requestFramePermissions": []
+}
