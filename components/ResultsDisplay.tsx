@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Source } from '../types';
 import { LoadingSpinner } from './LoadingSpinner';
-import { LinkIcon, ResearchDeeperIcon } from './icons';
+import { LinkIcon, ResearchDeeperIcon, DownloadIcon } from './icons';
 
 interface ResultsDisplayProps {
   text: string;
@@ -16,10 +16,10 @@ const SourceLink: React.FC<{ source: Source }> = ({ source }) => (
       href={source.web.uri}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 text-sm bg-slate-700/50 p-2 rounded-md hover:bg-slate-600/50 transition duration-200"
+      className="flex items-center gap-2 p-2 text-sm transition duration-200 rounded-md bg-slate-700/50 hover:bg-slate-600/50"
     >
       <LinkIcon />
-      <span className="truncate text-teal-300 hover:text-teal-200">{source.web.title || new URL(source.web.uri).hostname}</span>
+      <span className="text-teal-300 truncate hover:text-teal-200">{source.web.title || new URL(source.web.uri).hostname}</span>
     </a>
 );
 
@@ -49,6 +49,32 @@ const ResultItem: React.FC<{ line: string; onResearchDeeper: (query: string) => 
 
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, isLoading, error, onResearchDeeper }) => {
+  const handleDownload = () => {
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `aeternum-research-${timestamp}.md`;
+
+    let content = `# Aeternum Research Findings\n\n`;
+    content += `Generated on: ${new Date().toLocaleString()}\n\n`;
+    content += `## Research Results\n\n${text}\n\n`;
+
+    if (sources.length > 0) {
+      content += `## Sources\n\n`;
+      sources.forEach((source, index) => {
+        content += `${index + 1}. [${source.web.title || new URL(source.web.uri).hostname}](${source.web.uri})\n`;
+      });
+    }
+
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (isLoading) {
     return (
       <div className="mt-6 p-6 bg-slate-800/50 backdrop-blur-md rounded-lg shadow-lg border border-gray-600/50 flex flex-col items-center justify-center min-h-[20rem]">
@@ -61,9 +87,9 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, i
 
   if (error) {
     return (
-      <div className="mt-6 p-6 bg-red-900/50 rounded-lg border border-red-500/50">
+      <div className="p-6 mt-6 border rounded-lg bg-red-900/50 border-red-500/50">
         <h3 className="text-lg font-bold text-red-300">An Error Occurred</h3>
-        <p className="text-red-200 mt-2">{error}</p>
+        <p className="mt-2 text-red-200">{error}</p>
       </div>
     );
   }
@@ -75,22 +101,32 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, i
       </div>
     );
   }
-  
+
   const contentLines = text.split('\n');
 
   return (
-    <div className="mt-6 p-6 bg-slate-800/50 backdrop-blur-md rounded-lg shadow-lg border border-gray-600/50">
+    <div className="p-6 mt-6 border rounded-lg shadow-lg bg-slate-800/50 backdrop-blur-md border-gray-600/50">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold">Research Findings</h2>
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition duration-200 bg-teal-600 rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          title="Download research findings as Markdown"
+        >
+          <DownloadIcon />
+          Download
+        </button>
+      </div>
       <div className="prose prose-invert prose-p:my-0 prose-headings:text-yellow-400 prose-a:text-teal-400 hover:prose-a:text-teal-300 prose-strong:text-gray-100 max-w-none">
-        <h2 className="text-2xl font-bold mb-4">Research Findings</h2>
         {contentLines.map((line, index) => (
           <ResultItem key={index} line={line} onResearchDeeper={onResearchDeeper} />
         ))}
       </div>
       
       {sources.length > 0 && (
-        <div className="mt-8 pt-4 border-t border-gray-600/50">
-          <h3 className="text-xl font-bold mb-4 text-yellow-400">Sources</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="pt-4 mt-8 border-t border-gray-600/50">
+          <h3 className="mb-4 text-xl font-bold text-yellow-400">Sources</h3>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {sources.map((source, index) => (
               <SourceLink key={`${source.web.uri}-${index}`} source={source} />
             ))}
