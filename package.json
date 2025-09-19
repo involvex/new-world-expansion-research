@@ -1,6 +1,5 @@
 {
   "name": "aeternum-research-tool",
-  "private": true,
   "version": "0.0.0",
   "author": "Involvex",
   "repository": {
@@ -11,6 +10,9 @@
   "description": "A research tool that uses AI to search the web for information about the New World Aeternum expansion",
   "keywords": [ "genai", "research", "aeternum", "new world", "expansion"],
   "type": "module",
+  "bin": {
+    "aeternum-research-tool": "./bin/cli.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -44,11 +46,7 @@
     "vite": "^7.1.6"
   },
   "files": [
-    "node_modules",
-    "package-lock.json",
-    "vite.config.ts",
-    "tailwind.config.js",
-    "postcss.config.js",
-    "dist"
+    "bin",
+    "docs"
   ]
 }

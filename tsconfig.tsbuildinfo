@@ -1,0 +1,1 @@
+{"root":["./components/header.tsx","./components/historylog.tsx","./components/loadingspinner.tsx","./components/resultsdisplay.tsx","./components/searchbar.tsx","./components/icons.tsx","./services/geminiservice.ts","./types.ts","./index.tsx","./app.tsx"],"version":"5.9.2"}
