@@ -1,20 +1,99 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Aeternum Research Tool
 
-# Run and deploy your AI Studio app
+A modern web application for researching New World: Aeternum game content using Google's Gemini AI. Get detailed information about expansions, builds, crafting, and more through natural language queries.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1NpXBgrZymSsC2egB38V4-z9QXidb7zLG
+- 🤖 **AI-Powered Research**: Uses Google's Gemini AI for comprehensive game research
+- 🔍 **Natural Language Queries**: Ask questions in plain English about New World content
+- 📚 **Source Citations**: View sources and references for research results
+- 📜 **Search History**: Keep track of previous research queries
+- 🎨 **Modern UI**: Beautiful, responsive design with dark theme
+- ⚡ **Fast & Lightweight**: Built with React and Vite for optimal performance
 
-## Run Locally
+## Prerequisites
 
-**Prerequisites:**  Node.js
+- Node.js (v16 or higher)
+- Google Gemini API key
 
+## Installation
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/involvex/new-world-expansion-research.git
+   cd new-world-expansion-research
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up your API key:
+   - Create a `.env` file in the root directory
+   - Add your Gemini API key:
+     ```
+     VITE_API_KEY=your_gemini_api_key_here
+     ```
+   - Alternatively, you can enter the API key directly in the app when prompted
+
+## Usage
+
+1. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+2. Open your browser and navigate to `http://localhost:5173`
+
+3. Enter your research query in the search bar (e.g., "What's the new level cap in Nighthaven?")
+
+4. View the AI-generated research results with sources
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Tech Stack
+
+- **Frontend**: React 19, TypeScript, Tailwind CSS
+- **AI**: Google Gemini AI
+- **Build Tool**: Vite
+- **Linting**: ESLint with React and TypeScript support
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── Header.tsx      # App header
+│   ├── SearchBar.tsx   # Search input component
+│   ├── ResultsDisplay.tsx # Research results display
+│   ├── HistoryLog.tsx  # Search history
+│   └── icons.tsx       # Icon components
+├── services/
+│   └── geminiService.ts # Gemini AI integration
+├── types.ts            # TypeScript type definitions
+└── App.tsx             # Main app component
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with [Google Gemini AI](https://ai.google.dev/)
+- UI inspired by modern web design principles
+- Special thanks to the New World community for inspiration

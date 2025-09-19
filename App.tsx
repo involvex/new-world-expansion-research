@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SearchBar } from './components/SearchBar';
@@ -8,6 +10,7 @@ import type { Source, HistoryEntry } from './types';
 
 const App: React.FC = () => {
   const [query, setQuery] = useState<string>('');
+  const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_API_KEY || '');
   const [resultText, setResultText] = useState<string>('');
   const [sources, setSources] = useState<Source[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,14 +30,14 @@ const App: React.FC = () => {
     setQuery(searchQuery); // Set query when search starts
 
     try {
-      const result = await researchAeternum(searchQuery);
-      if (result) {
+      const result = await researchAeternum(searchQuery, apiKey || undefined);
+      if (result && result.text) {
         setResultText(result.text);
         setSources(result.sources);
         // Add to history, avoiding duplicates of the most recent query
         setHistory(prev => {
           if (prev[0]?.query === searchQuery) return prev;
-          return [{ id: Date.now().toString(), query: searchQuery, text: result.text, sources: result.sources }, ...prev];
+          return [{ id: Date.now().toString(), query: searchQuery, text: result.text as string, sources: result.sources }, ...prev];
         });
       } else {
          setError('No response from the research AI. Please try again.');
@@ -45,7 +48,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [apiKey]);
 
   const handleRestoreHistory = useCallback((entry: HistoryEntry) => {
     setQuery(entry.query);
@@ -63,14 +66,14 @@ const App: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-fixed text-gray-200 p-4 sm:p-6 lg:p-8"
+      className="min-h-screen p-4 text-gray-200 bg-fixed bg-center bg-cover sm:p-6 lg:p-8"
       style={{ backgroundImage: `url('https://picsum.photos/seed/aeternum/1920/1080')` }}
     >
       <div className="absolute inset-0 bg-slate-900 bg-opacity-80 backdrop-blur-sm"></div>
-      <div className="relative z-10 max-w-7xl mx-auto flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-8 mx-auto max-w-7xl">
         <Header />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2 flex flex-col gap-8">
+        <div className="grid items-start grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="flex flex-col gap-8 lg:col-span-2">
                 <main>
                     <SearchBar 
                         query={query}
@@ -78,6 +81,19 @@ const App: React.FC = () => {
                         onSearch={handleSearch}
                         isLoading={isLoading}
                     />
+                    <div className="mb-4">
+                        <label htmlFor="apiKey" className="block mb-2 text-sm font-medium text-gray-300">
+                          Gemini API Key (required)
+                        </label>
+                        <input
+                          id="apiKey"
+                          type="password"
+                          value={apiKey}
+                          onChange={(e) => setApiKey(e.target.value)}
+                          placeholder="Enter your Gemini API key"
+                          className="w-full px-3 py-2 text-white placeholder-gray-400 bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
                     <ResultsDisplay 
                         text={resultText}
                         sources={sources}
@@ -96,7 +112,7 @@ const App: React.FC = () => {
                 />
             </div>
         </div>
-        <footer className="text-center text-xs text-gray-500 mt-8">
+        <footer className="mt-8 text-xs text-center text-gray-500">
             <p>Aeternum Research Tool | Powered by Gemini</p>
         </footer>
       </div>

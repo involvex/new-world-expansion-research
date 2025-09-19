@@ -1,13 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type { Source } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const DEFAULT_API_KEY = import.meta.env.VITE_API_KEY as string;
 
 const systemInstruction = `You are an expert researcher and a hardcore MMORPG gamer advising a maximized, end-game New World player. Your goal is to provide advanced, actionable tips for the upcoming 'Aeternum' expansion, based on the absolute latest information available.
 
@@ -29,7 +23,14 @@ const systemInstruction = `You are an expert researcher and a hardcore MMORPG ga
 
 Synthesize findings from reputable, up-to-date sources like recent YouTube videos from top New World creators, nwdb.info, and nw-buddy.de. Format your response using clear markdown with distinct sections or bullet points for easy parsing.`;
 
-export const researchAeternum = async (prompt: string) => {
+export const researchAeternum = async (prompt: string, apiKey?: string) => {
+  const key = apiKey || DEFAULT_API_KEY;
+  if (!key) {
+    throw new Error("API key is required. Please provide it via .env or input field.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: key });
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -43,7 +44,10 @@ export const researchAeternum = async (prompt: string) => {
     const text = response.text;
     const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
     const sources: Source[] = groundingMetadata?.groundingChunks?.filter(
-        (chunk: any): chunk is Source => chunk.web && chunk.web.uri && chunk.web.title
+        (chunk: unknown): chunk is Source => {
+          const c = chunk as { web?: { uri?: string; title?: string } };
+          return !!(c.web && typeof c.web.uri === 'string' && typeof c.web.title === 'string');
+        }
     ) || [];
 
     return { text, sources };
