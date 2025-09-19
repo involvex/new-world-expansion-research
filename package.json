@@ -5,6 +5,7 @@
   "author": "Involvex",
   "repository": {
     "type": "git",
+    "topics": "aeternum-research-tool",
     "url": "https://github.com/involvex/new-world-expansion-research.git"
   },
   "description": "A research tool that uses AI to search the web for information about the New World Aeternum expansion",
