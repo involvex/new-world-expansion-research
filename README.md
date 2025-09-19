@@ -18,6 +18,13 @@ A modern web application for researching New World: Aeternum game content using 
 
 ## Installation
 
+### Option 1: Install globally via npx (Recommended)
+```bash
+npx aeternum-research-tool
+```
+This will automatically download, build, and run the Aeternum Research Tool with a local server.
+
+### Option 2: Install from source
 1. Clone the repository:
    ```bash
    git clone https://github.com/involvex/new-world-expansion-research.git
@@ -39,6 +46,17 @@ A modern web application for researching New World: Aeternum game content using 
 
 ## Usage
 
+### Using npx (Simplest)
+```bash
+npx aeternum-research-tool
+```
+The tool will automatically:
+- Build the application (if needed)
+- Start a local server on `http://localhost:3000`
+- Open your default browser
+- Display the Aeternum Research Tool interface
+
+### Using from source
 1. Start the development server:
    ```bash
    npm run dev
@@ -49,6 +67,12 @@ A modern web application for researching New World: Aeternum game content using 
 3. Enter your research query in the search bar (e.g., "What's the new level cap in Nighthaven?")
 
 4. View the AI-generated research results with sources
+
+### Features
+- **AI-Powered Research**: Ask questions about New World Aeternum in natural language
+- **Download Results**: Save research findings as markdown files
+- **Source Citations**: View and access original sources
+- **Search History**: Keep track of previous research queries
 
 ## Available Scripts
 
