@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Source } from '../types';
 import { LoadingSpinner } from './LoadingSpinner';
-import { LinkIcon, ResearchDeeperIcon, DownloadIcon } from './icons';
+import { LinkIcon, ResearchDeeperIcon, DownloadIcon, ShareIcon } from './icons';
 
 interface ResultsDisplayProps {
   text: string;
@@ -9,6 +9,8 @@ interface ResultsDisplayProps {
   isLoading: boolean;
   error: string | null;
   onResearchDeeper: (query: string) => void;
+  onShare: (text: string, sources: Source[]) => void;
+  showShareSuccess: boolean;
 }
 
 const SourceLink: React.FC<{ source: Source }> = ({ source }) => (
@@ -48,7 +50,7 @@ const ResultItem: React.FC<{ line: string; onResearchDeeper: (query: string) => 
 };
 
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, isLoading, error, onResearchDeeper }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, isLoading, error, onResearchDeeper, onShare, showShareSuccess }) => {
   const handleDownload = () => {
     const timestamp = new Date().toISOString().split('T')[0];
     const filename = `aeternum-research-${timestamp}.md`;
@@ -108,14 +110,27 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ text, sources, i
     <div className="p-6 mt-6 border rounded-lg shadow-lg bg-slate-800/50 backdrop-blur-md border-gray-600/50">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Research Findings</h2>
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition duration-200 bg-teal-600 rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
-          title="Download research findings as Markdown"
-        >
-          <DownloadIcon />
-          Download
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onShare(text, sources)}
+            className="relative flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            title="Share research findings"
+          >
+            <ShareIcon />
+            Share
+            {showShareSuccess && (
+              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">Copied!</span>
+            )}
+          </button>
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition duration-200 bg-teal-600 rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            title="Download research findings as Markdown"
+          >
+            <DownloadIcon />
+            Download
+          </button>
+        </div>
       </div>
       <div className="prose prose-invert prose-p:my-0 prose-headings:text-yellow-400 prose-a:text-teal-400 hover:prose-a:text-teal-300 prose-strong:text-gray-100 max-w-none">
         {contentLines.map((line, index) => (

@@ -16,11 +16,18 @@ A modern web application for researching New World: Aeternum game content using 
 - Node.js (v16 or higher)
 - Google Gemini API key
 
-## Installation
-
-### Option 1: Install globally via npx (Recommended)
+## Quick Start
+### No install with npx
 ```bash
 npx aeternum-research-tool
+```
+
+## Installation
+
+### Option 1: Install globally (Recommended)
+```bash
+npm install -g aeternum-research-tool
+aeternum-research-tool
 ```
 This will automatically download, build, and run the Aeternum Research Tool with a local server.
 
@@ -112,12 +119,6 @@ src/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built with [Google Gemini AI](https://ai.google.dev/)
-- UI inspired by modern web design principles
-- Special thanks to the New World community for inspiration
+## Support
+### Buymeacoffee
+- `https://www.buymeacoffee.com/involvex`

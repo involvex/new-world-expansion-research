@@ -6,29 +6,35 @@ import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import ora from 'ora';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
 const distDir = join(projectRoot, 'docs');
 
-console.log('🚀 Starting Aeternum Research Tool...\n');
+let runningSpinner; // Declare runningSpinner in a higher scope
+
+console.log('   Thank your for using Aeternum Research Tool! \n');
+console.log('   Check out the Repository:\n🛜 https://github.com/involvex/new-world-expansion-research \n');
+
+const startupSpinner = ora(' Starting Aeternum Research Tool...').start();
 
 // Check if dist directory exists, if not, build the project
 if (!existsSync(distDir)) {
-  console.log('📦 Building project...');
+  startupSpinner.text = ' Building project...';
   try {
     execSync('npm run build', {
       cwd: projectRoot,
       stdio: 'inherit'
     });
-    console.log('✅ Build completed!\n');
+    startupSpinner.succeed(' Build completed!');
   } catch (error) {
-    console.error('❌ Build failed:', error.message);
+    startupSpinner.fail(`Build failed: ${error.message}`);
     process.exit(1);
   }
 } else {
-  console.log('📦 Using existing build...\n');
+  startupSpinner.info(' Using existing build.');
 }
 
 // Create HTTP server to serve the built files
@@ -74,8 +80,8 @@ const PORT = 3000;
 // Start server
 server.listen(PORT, () => {
   const url = `http://localhost:${PORT}`;
-  console.log('🌐 Server running at:', url);
-  console.log('📖 Aeternum Research Tool is ready!\n');
+  startupSpinner.succeed(` Server is running at: ${url}`);
+  ora().succeed(' Aeternum Research Tool is ready!');
 
   // Open browser
   const { platform } = process;
@@ -91,27 +97,89 @@ server.listen(PORT, () => {
 
   try {
     execSync(`${openCommand} ${url}`, { stdio: 'ignore' });
-    console.log('🌍 Browser opened automatically');
+    ora().succeed(' Browser opened automatically');
   } catch (error) {
-    console.log('ℹ️  Please open your browser and navigate to:', url);
+    ora().warn(`Please open your browser and navigate to: ${url}`);
   }
 
-  console.log('\n💡 Press Ctrl+C to stop the server');
+  runningSpinner = ora(' Aeternum Research Tool is running...').start();
+
+  console.log('\n💡 Press Ctrl+C to stop the server\n❓ to display Hotkeys');
+
+  // Enable raw mode for stdin to listen for single key presses
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.setEncoding('utf8');
+
+  process.stdin.on('data', (key) => {
+    // Ctrl+C to exit
+    if (key === '\u0003') {
+      process.emit('SIGINT');
+      return;
+    }
+
+    const keyString = key.toString().toLowerCase();
+
+    switch (keyString) {
+      case 'g': // Open GitHub repository
+        ora().info('Opening GitHub repository...');
+        execSync(`start https://github.com/involvex/new-world-expansion-research`, { stdio: 'ignore' });
+        break;
+      case 'r': // Restart server (CLI process)
+        ora().warn(' To restart the server, please stop the current process (Ctrl+C) and run the CLI again.');
+        break;
+      case 'd': // Download data (frontend action)
+        ora().info(' Data download functionality is available in the web application (hotkey D).');
+        break;
+      case 's': // Share Research (frontend action)
+        ora().info(' Share research functionality is available in the web application (hotkey S).');
+        break;
+      case '?': // Show hotkey overview
+        ora().info(
+          'CLI Hotkeys:\n' +
+          '  G: Open GitHub Repository\n' +
+          '  R: Restart CLI (manual restart required)\n' +
+          '  D: Download Data (web app only)\n' +
+          '  S: Share Research (web app only)\n' +
+          '  ?: Show this Hotkey Overview\n' +
+          '  Ctrl+C: Stop Server'
+        );
+        break;
+      default:
+        // Ignore other keys
+        break;
+    }
+  });
+
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    startupSpinner.fail(`Port ${PORT} is already in use. Please close the other application or try a different port.`);
+    process.exit(1);
+  } else {
+    startupSpinner.fail(`Server failed to start: ${err.message}`);
+    process.exit(1);
+  }
 });
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down Aeternum Research Tool...');
+  process.stdin.setRawMode(false); // Disable raw mode before exiting
+  runningSpinner.stop(); // Stop the running spinner
+  const shutdownSpinner = ora(' Shutting down Aeternum Research Tool...').start();
   server.close(() => {
-    console.log('✅ Server stopped');
+    shutdownSpinner.succeed(' Server stopped');
+    console.log('\n   Support the Project at:\n☕ https://www.buymeacoffee.com/involvex\n   See your soon!');
     process.exit(0);
   });
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n👋 Shutting down Aeternum Research Tool...');
+  process.stdin.setRawMode(false); // Disable raw mode before exiting
+  runningSpinner.stop(); // Stop the running spinner
+  const shutdownSpinner = ora(' Shutting down Aeternum Research Tool...').start();
+  console.log('\n   Support the Project at:\n☕ https://www.buymeacoffee.com/involvex\n   See your soon!');
   server.close(() => {
-    console.log('✅ Server stopped');
+    shutdownSpinner.succeed(' Server stopped');
     process.exit(0);
   });
 });

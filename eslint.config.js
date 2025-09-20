@@ -69,7 +69,7 @@ export default [
 
   // Override for specific config files to disable type-aware linting
   {
-    files: ["eslint.config.js", "postcss.config.js", "tailwind.config.js", "vite.config.ts"],
+    files: ["eslint.config.js", "postcss.config.js", "tailwind.config.js", "vite.config.ts", "bin/cli.js", "vite.config.d.ts", "vite.config.js"],
     languageOptions: {
       parserOptions: {
         project: null, // Disable project for these files

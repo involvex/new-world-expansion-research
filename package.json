@@ -1,6 +1,6 @@
 {
   "name": "aeternum-research-tool",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "author": "Involvex",
   "repository": {
     "type": "git",
@@ -8,7 +8,13 @@
     "url": "https://github.com/involvex/new-world-expansion-research.git"
   },
   "description": "A research tool that uses AI to search the web for information about the New World Aeternum expansion",
-  "keywords": [ "genai", "research", "aeternum", "new world", "expansion"],
+  "keywords": [
+    "genai",
+    "research",
+    "aeternum",
+    "new world",
+    "expansion"
+  ],
   "type": "module",
   "bin": {
     "aeternum-research-tool": "./bin/cli.js"
@@ -23,6 +29,7 @@
   "dependencies": {
     "@google/genai": "^1.20.0",
     "dotenv": "^17.2.2",
+    "ora": "^9.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

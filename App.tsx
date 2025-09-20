@@ -1,14 +1,15 @@
 /// <reference types="vite/client" />
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { SearchBar } from './components/SearchBar';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { HistoryLog } from './components/HistoryLog';
+import { HotkeyOverview } from './components/HotkeyOverview';
 import { researchAeternum } from './services/geminiService';
 import type { Source, HistoryEntry } from './types';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [query, setQuery] = useState<string>('');
   const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_API_KEY || '');
   const [resultText, setResultText] = useState<string>('');
@@ -16,6 +17,82 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [showShareSuccess, setShowShareSuccess] = useState<boolean>(false);
+  const [showHotkeyOverview, setShowHotkeyOverview] = useState<boolean>(false);
+
+  const handleShare = useCallback(async (text: string, sources: Source[]) => {
+    const githubRepoLink = "https://github.com/involvex/new-world-expansion-research";
+    let shareText = `Aeternum Research Tool Results:\n\n${text}\n\n`;
+
+    if (sources.length > 0) {
+      shareText += "Sources:\n";
+      sources.forEach((source, index) => {
+        shareText += `${index + 1}. ${source.web?.title || source.web?.uri}\n`;
+      });
+      shareText += `\nRead more at: ${githubRepoLink}`;
+    } else {
+      shareText += `Read more at: ${githubRepoLink}`;
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShowShareSuccess(true);
+      setTimeout(() => setShowShareSuccess(false), 3000); // Hide after 3 seconds
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      // Optionally, show an error message to the user
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return; // Ignore if modifier keys are pressed
+
+      switch (event.key) {
+        case 'g': // Open GitHub repository
+        case 'G':
+          window.open("https://github.com/involvex/new-world-expansion-research", "_blank");
+          break;
+        case 'r': // Refresh page
+        case 'R':
+          window.location.reload();
+          break;
+        case 'd': // Download data (as JSON for now)
+        case 'D':
+          if (resultText) {
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `aeternum-research-${timestamp}.json`;
+            const data = { text: resultText, sources: sources };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }
+          break;
+        case 's': // Share Research (to clipboard for Discord)
+        case 'S':
+          if (resultText) {
+            handleShare(resultText, sources);
+          }
+          break;
+        case '?': // Toggle Hotkey overview
+          setShowHotkeyOverview(prev => !prev);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [resultText, sources, handleShare]);
 
   const handleSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -100,6 +177,8 @@ const App: React.FC = () => {
                         isLoading={isLoading}
                         error={error}
                         onResearchDeeper={handleSearch}
+                        onShare={handleShare}
+                        showShareSuccess={showShareSuccess}
                     />
                 </main>
             </div>
@@ -113,11 +192,16 @@ const App: React.FC = () => {
             </div>
         </div>
         <footer className="mt-8 text-xs text-center text-gray-500">
-            <p>Aeternum Research Tool | Powered by Gemini</p>
+            <a href="https://github.com/involvex/new-world-expansion-research" target="_blank" rel="noopener noreferrer"><p>Aeternum Research Tool | Created by Involvex </p></a>
+            <p>Researched with Aeternum Research Tool</p>
+            <p className="mt-2 text-gray-400">Press &#39; ? &#39; for Hotkeys</p>
+            <br />
+            <a href="https://www.buymeacoffee.com/involvex" target="_blank" rel="noopener noreferrer">
+            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style={{ height: '40px', width: '135px', 'textAlign': 'center', 'marginLeft': '42%'}} ></img>
+            </a>
         </footer>
       </div>
+      {showHotkeyOverview && <HotkeyOverview onClose={() => setShowHotkeyOverview(false)} />}
     </div>
   );
 };
-
-export default App;
