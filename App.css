@@ -1,0 +1,10 @@
+.app-background {
+  background-image: url("https://picsum.photos/seed/aeternum/1920/1080");
+}
+
+.bmc-button {
+  height: 40px;
+  width: 135px;
+  text-align: center;
+  margin-left: 42%;
+}

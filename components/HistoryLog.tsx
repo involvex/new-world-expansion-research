@@ -1,6 +1,6 @@
-import React from 'react';
-import type { HistoryEntry } from '../types';
-import { HistoryIcon } from './icons';
+import React from "react";
+import type { HistoryEntry } from "../types";
+import { HistoryIcon } from "./icons";
 
 interface HistoryLogProps {
   history: HistoryEntry[];
@@ -9,16 +9,21 @@ interface HistoryLogProps {
   isLoading: boolean;
 }
 
-export const HistoryLog: React.FC<HistoryLogProps> = ({ history, onRestore, onClear, isLoading }) => {
+export const HistoryLog: React.FC<HistoryLogProps> = ({
+  history,
+  onRestore,
+  onClear,
+  isLoading,
+}) => {
   if (history.length === 0) {
     return (
-        <aside className="bg-slate-800/50 backdrop-blur-md p-6 rounded-lg shadow-lg border border-gray-600/50 h-fit text-center text-gray-400">
-            <h2 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2 mb-4">
-                <HistoryIcon />
-                Research Log
-            </h2>
-            <p className="text-sm">Your past searches will be stored here.</p>
-        </aside>
+      <aside className="bg-slate-800/50 backdrop-blur-md p-6 rounded-lg shadow-lg border border-gray-600/50 h-fit text-center text-gray-400">
+        <h2 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2 mb-4">
+          <HistoryIcon />
+          Research Log
+        </h2>
+        <p className="text-sm">Your past searches will be stored here.</p>
+      </aside>
     );
   }
 
@@ -29,8 +34,8 @@ export const HistoryLog: React.FC<HistoryLogProps> = ({ history, onRestore, onCl
           <HistoryIcon />
           Research Log
         </h2>
-        <button 
-          onClick={onClear} 
+        <button
+          onClick={onClear}
           className="text-xs text-gray-400 hover:text-red-400 transition"
           aria-label="Clear research log"
         >

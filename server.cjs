@@ -1,16 +1,26 @@
-
-const express = require('express');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const dotenv = require('dotenv');
+const express = require("express");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const dotenv = require("dotenv");
+const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "X-API-Key", "Authorization"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
-
-const genAI = new GoogleGenerativeAI(process.env.VITE_API_KEY);
 
 const systemInstruction = `You are an expert researcher and a hardcore MMORPG gamer advising a maximized, end-game New World player. Your goal is to provide advanced, actionable tips for the upcoming 'Aeternum' expansion, based on the absolute latest information available.
 
@@ -32,30 +42,53 @@ const systemInstruction = `You are an expert researcher and a hardcore MMORPG ga
 
 Synthesize findings from reputable, up-to-date sources like recent YouTube videos from top New World creators, nwdb.info, and nw-buddy.de. Format your response using clear markdown with distinct sections or bullet points for easy parsing.`;
 
-app.post('/api/gemini', async (req, res) => {
+app.post("/api/gemini", async (req, res) => {
   try {
     const { query } = req.body;
+    const apiKey = req.headers["x-api-key"];
 
     if (!query) {
-      return res.status(400).json({ error: 'Query is required' });
+      throw new Error("Query is required");
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction });
+    if (!apiKey) {
+      throw new Error("API key is required");
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction,
+    });
     const result = await model.generateContent(query);
     const response = await result.response;
     const text = response.text();
-    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.filter(chunk => {
-      const webChunk = chunk;
-      return !!(webChunk.web && typeof webChunk.web.uri === 'string' && typeof webChunk.web.title === 'string');
-    }) || [];
+    const sources =
+      response.candidates?.[0]?.groundingMetadata?.groundingChunks?.filter(
+        (chunk) => {
+          const webChunk = chunk;
+          return !!(
+            webChunk.web &&
+            typeof webChunk.web.uri === "string" &&
+            typeof webChunk.web.title === "string"
+          );
+        },
+      ) || [];
 
     res.json({ text, sources });
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
-    res.status(500).json({ error: 'Failed to get response from Gemini API.' });
+    console.error("Error:", error);
+    res.status(400).json({ error: error.message });
   }
 });
 
+module.exports = app;
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
+  if (process.send && process.env.NODE_ENV !== "test") {
+    process.send("backend-ready");
+  }
 });
+
+module.exports = app;

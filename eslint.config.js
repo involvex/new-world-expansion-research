@@ -8,7 +8,13 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 export default [
   // Base configuration for ignoring files
   {
-    ignores: ["docs/**/*", "node_modules/**/*", "vite-env.d.ts"]
+    ignores: [
+      "docs/**/*",
+      "node_modules/**/*",
+      "vite-env.d.ts",
+      "server.cjs",
+      "coverage/**/*",
+    ],
   },
   // Recommended ESLint core rules for all files
   js.configs.recommended,
@@ -20,7 +26,7 @@ export default [
       parser: tseslint.parser, // Use TypeScript parser for all relevant files
       parserOptions: {
         ecmaFeatures: {
-          jsx: true
+          jsx: true,
         },
         ecmaVersion: "latest",
         sourceType: "module",
@@ -28,7 +34,7 @@ export default [
       },
       globals: {
         ...globals.browser, // Add browser globals
-        ...globals.node // Add node globals (for environment variables, etc.)
+        ...globals.node, // Add node globals (for environment variables, etc.)
       },
     },
     plugins: {
@@ -44,15 +50,15 @@ export default [
     },
     rules: {
       // Disable base ESLint 'no-unused-vars' and enable TypeScript-specific one
-      
+
       "no-unused-vars": [
         "warn",
         {
-          "argsIgnorePattern": "^", // Ignore arguments that start with _
-          "varsIgnorePattern": "^", // Ignore variables that start with _
-          "caughtErrorsIgnorePattern": "^",
-          "destructuredArrayIgnorePattern": "^",
-        }
+          argsIgnorePattern: "^", // Ignore arguments that start with _
+          varsIgnorePattern: "^", // Ignore variables that start with _
+          caughtErrorsIgnorePattern: "^",
+          destructuredArrayIgnorePattern: "^",
+        },
       ],
       "@typescript-eslint/no-explicit-any": "off",
       // Spread recommended TypeScript rules first
@@ -69,7 +75,15 @@ export default [
 
   // Override for specific config files to disable type-aware linting
   {
-    files: ["eslint.config.js", "postcss.config.js", "tailwind.config.js", "vite.config.ts", "bin/cli.js", "vite.config.d.ts", "vite.config.js"],
+    files: [
+      "eslint.config.js",
+      "postcss.config.js",
+      "tailwind.config.js",
+      "vite.config.ts",
+      "bin/cli.js",
+      "vite.config.d.ts",
+      "vite.config.js",
+    ],
     languageOptions: {
       parserOptions: {
         project: null, // Disable project for these files

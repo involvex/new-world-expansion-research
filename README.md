@@ -17,7 +17,9 @@ A modern web application for researching New World: Aeternum game content using 
 - Google Gemini API key
 
 ## Quick Start
+
 ### No install with npx
+
 ```bash
 npx aeternum-research-tool
 ```
@@ -25,20 +27,25 @@ npx aeternum-research-tool
 ## Installation
 
 ### Option 1: Install globally (Recommended)
+
 ```bash
 npm install -g aeternum-research-tool
 aeternum-research-tool
 ```
+
 This will automatically download, build, and run the Aeternum Research Tool with a local server.
 
 ### Option 2: Install from source
+
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/involvex/new-world-expansion-research.git
    cd new-world-expansion-research
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -54,17 +61,22 @@ This will automatically download, build, and run the Aeternum Research Tool with
 ## Usage
 
 ### Using npx (Simplest)
+
 ```bash
 npx aeternum-research-tool
 ```
+
 The tool will automatically:
+
 - Build the application (if needed)
 - Start a local server on `http://localhost:3000`
 - Open your default browser
 - Display the Aeternum Research Tool interface
 
 ### Using from source
+
 1. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -76,6 +88,7 @@ The tool will automatically:
 4. View the AI-generated research results with sources
 
 ### Features
+
 - **AI-Powered Research**: Ask questions about New World Aeternum in natural language
 - **Download Results**: Save research findings as markdown files
 - **Source Citations**: View and access original sources
@@ -120,5 +133,7 @@ src/
 5. Open a Pull Request
 
 ## Support
+
 ### Buymeacoffee
+
 - `https://www.buymeacoffee.com/involvex`
