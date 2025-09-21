@@ -1,6 +1,6 @@
 {
   "name": "aeternum-research-tool",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Involvex",
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "dependencies": {
     "@google/genai": "^1.20.0",
     "dotenv": "^17.2.2",
+    "express": "^5.1.0",
     "ora": "^9.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

@@ -11,7 +11,6 @@ import type { Source, HistoryEntry } from './types';
 
 export const App: React.FC = () => {
   const [query, setQuery] = useState<string>('');
-  const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_API_KEY || '');
   const [resultText, setResultText] = useState<string>('');
   const [sources, setSources] = useState<Source[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -107,7 +106,7 @@ export const App: React.FC = () => {
     setQuery(searchQuery); // Set query when search starts
 
     try {
-      const result = await researchAeternum(searchQuery, apiKey || undefined);
+      const result = await researchAeternum(searchQuery);
       if (result && result.text) {
         setResultText(result.text);
         setSources(result.sources);
@@ -125,7 +124,7 @@ export const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey]);
+  }, []);
 
   const handleRestoreHistory = useCallback((entry: HistoryEntry) => {
     setQuery(entry.query);
@@ -158,19 +157,6 @@ export const App: React.FC = () => {
                         onSearch={handleSearch}
                         isLoading={isLoading}
                     />
-                    <div className="mb-4">
-                        <label htmlFor="apiKey" className="block mb-2 text-sm font-medium text-gray-300">
-                          Gemini API Key (required)
-                        </label>
-                        <input
-                          id="apiKey"
-                          type="password"
-                          value={apiKey}
-                          onChange={(e) => setApiKey(e.target.value)}
-                          placeholder="Enter your Gemini API key"
-                          className="w-full px-3 py-2 text-white placeholder-gray-400 bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
                     <ResultsDisplay 
                         text={resultText}
                         sources={sources}
