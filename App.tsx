@@ -6,6 +6,7 @@ import { SearchBar } from "./components/SearchBar";
 import { ResultsDisplay } from "./components/ResultsDisplay";
 import { HistoryLog } from "./components/HistoryLog";
 import { HotkeyOverview } from "./components/HotkeyOverview";
+import { TradeskillCalculator } from "./components/TradeskillCalculator";
 import { researchAeternum } from "./services/geminiService";
 import type { Source, HistoryEntry } from "./types";
 import "./App.css";
@@ -23,6 +24,7 @@ export const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showShareSuccess, setShowShareSuccess] = useState<boolean>(false);
   const [showHotkeyOverview, setShowHotkeyOverview] = useState<boolean>(false);
+  const [showTradeskillCalculator, setShowTradeskillCalculator] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>("");
 
   const handleShare = useCallback(async (text: string, sources: Source[]) => {
@@ -93,6 +95,10 @@ export const App: React.FC = () => {
           break;
         case "?": // Toggle Hotkey overview
           setShowHotkeyOverview((prev) => !prev);
+          break;
+        case "t": // Toggle Tradeskill Calculator
+        case "T":
+          setShowTradeskillCalculator((prev) => !prev);
           break;
         default:
           break;
@@ -219,7 +225,26 @@ export const App: React.FC = () => {
               onClear={handleClearHistory}
               isLoading={isLoading}
             />
-            {/* New API Key Management Section */}
+            {/* Tradeskill Calculator Section */}
+            <div className="p-4 rounded-lg shadow-lg bg-slate-800">
+              <h3 className="mb-4 text-lg font-semibold text-gray-100">
+                Night Haven Tradeskill Calculator
+              </h3>
+              <p className="mb-4 text-sm text-gray-300">
+                Calculate resource requirements for leveling all tradeskills from 250 to 300 in the upcoming Night Haven expansion.
+              </p>
+              <button
+                onClick={() => setShowTradeskillCalculator(true)}
+                className="w-full px-4 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-800 transition-colors"
+              >
+                Open Tradeskill Calculator
+              </button>
+              <p className="mt-2 text-xs text-gray-400">
+                Press 'T' for quick access
+              </p>
+            </div>
+
+            {/* API Key Management Section */}
             <div className="p-4 rounded-lg shadow-lg bg-slate-800">
               <h3 className="mb-4 text-lg font-semibold text-gray-100">
                 Gemini API Key
@@ -292,6 +317,9 @@ export const App: React.FC = () => {
       </div>
       {showHotkeyOverview && (
         <HotkeyOverview onClose={() => setShowHotkeyOverview(false)} />
+      )}
+      {showTradeskillCalculator && (
+        <TradeskillCalculator onClose={() => setShowTradeskillCalculator(false)} />
       )}
     </div>
   );
