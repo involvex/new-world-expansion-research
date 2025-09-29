@@ -82,6 +82,36 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
+// Tradeskill Calculator API endpoint
+app.get("/api/tradeskills", async (req, res) => {
+  try {
+    // Import the tradeskill service dynamically
+    const { calculateTradeskillRequirements } = await import("./services/tradeskillService.js");
+    const calculation = calculateTradeskillRequirements();
+    res.json(calculation);
+  } catch (error) {
+    console.error("Error calculating tradeskill requirements:", error);
+    res.status(500).json({ error: "Failed to calculate tradeskill requirements" });
+  }
+});
+
+app.get("/api/tradeskills/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const { getTradeskillByName } = await import("./services/tradeskillService.js");
+    const tradeskill = getTradeskillByName(name);
+    
+    if (!tradeskill) {
+      return res.status(404).json({ error: "Tradeskill not found" });
+    }
+    
+    res.json(tradeskill);
+  } catch (error) {
+    console.error("Error getting tradeskill:", error);
+    res.status(500).json({ error: "Failed to get tradeskill data" });
+  }
+});
+
 module.exports = app;
 
 app.listen(port, () => {

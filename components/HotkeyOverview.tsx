@@ -29,6 +29,10 @@ export const HotkeyOverview: React.FC<HotkeyOverviewProps> = ({ onClose }) => {
             Results (to clipboard)
           </li>
           <li>
+            <span className="font-bold text-teal-300">T</span>: Open Tradeskill
+            Calculator
+          </li>
+          <li>
             <span className="font-bold text-teal-300">?</span>: Toggle Hotkey
             Overview
           </li>
